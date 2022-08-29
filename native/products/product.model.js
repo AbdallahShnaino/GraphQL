@@ -69,10 +69,25 @@ function addNewProductReview (productID, rating, comment){
      }
      return response
 }
+function addNewProduct (id ,description ,price){
+    var newProduct = {
+        id,
+        description,
+        price,
+        reviews:[]
+    }
+    products.push(newProduct)
+   return {
+        code: 200,
+        status: true,
+        message: 'new comment added',
+        product: newProduct
+    }   
+}
 module.exports = {
     getProducts,
     productsByPrice,
     productsByID,
     addNewProductReview,
-
+    addNewProduct,
 }

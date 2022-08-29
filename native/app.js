@@ -1,30 +1,33 @@
 const express = require('express')
 const path = require('path')
-const { graphqlHTTP } = require('express-graphql')
+const { ApolloServer } = require('apollo-server-express')
 const { makeExecutableSchema } = require('@graphql-tools/schema')
 const { loadFilesSync } = require('@graphql-tools/load-files')
-
-const app = express()
 const PORT = 3000
 
 const typesArray = loadFilesSync(path.join( __dirname , "**/*.graphql"))
 const resolversArray = loadFilesSync(path.join( __dirname , "**/*.resolvers.js"))
+async function startApolloServer(){
+    const app = express()
+    
+    const schema = makeExecutableSchema(
+        {
+            typeDefs:typesArray,
+            resolvers:resolversArray,
+        }
+    );
+       const server = new ApolloServer({
+         schema:schema
+       })
+       await server.start()
+       server.applyMiddleware({app , path:'/api'})
+       
+       app.listen(PORT, () => {
+           console.log('Our server is listening on port ' + PORT)
+       })
+}
 
-const schema = makeExecutableSchema(
-    {
-        typeDefs:typesArray,
-        resolvers:resolversArray,
-    }
-);
-
-app.use('/api', graphqlHTTP({
-    schema: schema,
-}))
-
-app.listen(PORT, () => {
-    console.log('Our server is listening on port ' + PORT)
-})
-
+startApolloServer()
 /* 
 Query 1
 
@@ -72,11 +75,31 @@ Query 3
 Mutation 1
 
 mutation {
-    addNewProductReview (productID:"redShoe" ,comment: "nice", rating:5){
-         id
-         description
-         price
+    addNewProductReview (productID:"BlueJacket" ,comment: "good", rating:10){
+            code
+            status
+            message
+            product{
+                reviews{
+                    rating
+                    comment
+                }
+            }
+
+
     }
 }
-
+Mutation 2
+mutation{
+    addNewProduct(id: "BlueJacket",description: "new style",price: 90){
+           code
+            status
+            message
+            product{
+                id
+                description
+                price
+            }
+    }
+}
 */

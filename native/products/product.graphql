@@ -28,4 +28,10 @@ type ProductsWriteOps implements WriteOpsResponse {
 
 type Mutation{
     addNewProductReview(productID: ID, rating: Int!,comment: String): ProductsWriteOps
+    addNewProduct(  id: ID!,
+                    description: String!,
+                    price: Float!,
+                ): ProductsWriteOps
+
+    
 }

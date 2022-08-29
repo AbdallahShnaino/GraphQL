@@ -16,6 +16,9 @@ module.exports = {
         addNewProductReview: (_,{productID, rating, comment})=>{
             return productModel.addNewProductReview(productID,rating,comment)
         },
+        addNewProduct: (_,{id ,description ,price})=>{
+            return productModel.addNewProduct(id ,description ,price)
+        },
     }
 
 }
