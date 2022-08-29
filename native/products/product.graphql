@@ -1,0 +1,31 @@
+type Query {
+    products: [Product]
+    productsByPrice(minPrice: Float!, maxPrice: Float!): [Product]
+    productsByID(id:ID):Product
+}
+
+type Product {
+  id: ID!
+  description: String!
+  price: Float!
+  reviews: [Review]
+}
+type Review {
+  rating: Int!
+  comment: String
+}
+interface WriteOpsResponse {
+    code: Int!
+    status: Boolean!
+    message: String!
+}
+type ProductsWriteOps implements WriteOpsResponse {
+    code: Int!
+    status: Boolean!
+    message: String!
+    product: Product
+}
+
+type Mutation{
+    addNewProductReview(productID: ID, rating: Int!,comment: String): ProductsWriteOps
+}
