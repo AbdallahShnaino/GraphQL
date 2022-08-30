@@ -1,0 +1,56 @@
+interface Person {
+  fullName: String!
+  age: Int!
+}
+
+
+type Buyer implements Person {
+  fullName: String!
+  age: Int!
+  itemsNumber: Int!
+}
+
+type Seller implements Person {
+  fullName: String!
+  age: Int!
+  level: Int!
+}
+type Item {
+  id: ID!
+  seller: Seller!
+  buyer: Buyer!
+}
+
+union entity =  Seller | Buyer
+
+
+  input SignupInput {
+    email: String!
+    password: String!
+    role: Role!
+  }
+
+  input SigninInput {
+    email: String!
+    password: String!
+  }
+ type AuthUser {
+    token: String!
+    user: User!
+  }
+    enum Role {
+    ADMIN
+    MEMBER
+    GUEST
+  }
+
+
+type Query {
+  getPersons: [Person]
+  getPerson(fullName: String): entity
+  getItem(itemID: ID!):Item
+
+  signup(input: SignupInput!): AuthUser!
+  signin(input: SigninInput!): AuthUser!
+
+}

@@ -3,6 +3,7 @@ const path = require('path')
 const { ApolloServer } = require('apollo-server-express')
 const { makeExecutableSchema } = require('@graphql-tools/schema')
 const { loadFilesSync } = require('@graphql-tools/load-files')
+const { getUserFromToken , createToken } = require('./auth/auth')
 const PORT = 3000
 
 const typesArray = loadFilesSync(path.join( __dirname , "**/*.graphql"))
@@ -17,7 +18,12 @@ async function startApolloServer(){
         }
     );
        const server = new ApolloServer({
-         schema:schema
+         schema:schema,
+         context({req}){
+            const token = req.headers.authorization
+            const user = getUserFromToken(token)
+            return { user , createToken}
+         }
        })
        await server.start()
        server.applyMiddleware({app , path:'/api'})
@@ -72,6 +78,63 @@ Query 3
          price
     }
 }
+Query 4
+{
+  getPersons{
+    ... on Buyer{
+      age
+      firstName
+      itemsNumber
+      lastName
+      __typename
+    }
+    ... on Seller{
+            age
+      firstName
+      level
+      lastName
+      __typename
+    }
+  }
+}
+
+Query 5
+
+query ($fullName: String) {
+  getPerson(fullName: "Mohammed Ali"){
+    ... on Buyer{
+      fullName
+      __typename
+    }
+    ... on Seller{
+      fullName
+      __typename
+    }
+  }
+}
+
+Query 6
+
+query ($itemId: ID!) {
+  getItem(itemID: "1") {
+    id
+    buyer {
+      fullName
+      age
+      itemsNumber
+      __typename
+    }
+    seller {
+      fullName
+      age
+      level
+      __typename
+    }
+  }
+}
+
+
+
 Mutation 1
 
 mutation {
